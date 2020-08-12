@@ -1,0 +1,11 @@
+
+
+- add int validation to int model fields
+
+
+- granular notification controls:
+    - alert on failure
+    - alert on success
+    - alert on start
+    - alert on completion
+

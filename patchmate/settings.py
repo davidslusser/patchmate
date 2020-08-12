@@ -25,7 +25,7 @@ SECRET_KEY = 'q#u4+1x=0+a6)%4tw=&r@c=&*0080s)q2*(-3g-16yk7$soq_a'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', ]
 
 
 # Application definition
@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     'demo',
 
 ]
+
+INTERNAL_IPS = ['127.0.0.1', ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

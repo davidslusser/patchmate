@@ -147,6 +147,9 @@ def create_services(data=None, clean=False, count=1):
     """
     patch_frequency_list = [15, 30, 45, 60, 90]
     dc_list = ['sfo', 'lax', 'rno']
+    day_list = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    package_name_list = ['python', 'mysql', 'perl', 'php', 'zip', 'openssh', 'gnome', 'grep', 'glib', 'libxml',
+                         'httpd', 'nginx']
 
     if clean:
         Service.objects.all().delete()
@@ -170,12 +173,45 @@ def create_services(data=None, clean=False, count=1):
 
             # create patch pools for this service
             for dc in dc_list:
-                PatchPool.objects.get_or_create(service=service,
-                                                name="{}_{}".format(service, dc),
-                                                description="patching pool for {} hosts in the {} datacenter".format(service, dc),
-                                                hostname_regex="^({})_{}_(/d{{3}})$".format(service.name, dc),
-                                                enabled=bool(random.getrandbits(1)),
-                                                )
+                pool, is_new = PatchPool.objects.get_or_create(
+                    service=service,
+                    name="{}_{}".format(service, dc),
+                    description="patching pool for {} hosts in the {} datacenter".format(service, dc),
+                    hostname_regex="^({})_{}_(/d{{3}})$".format(service.name, dc),
+                    patching_enabled=bool(random.getrandbits(1)),
+                )
+
+                # create patching rule(s) for pool
+                rule, is_new = PatchPoolRule.objects.get_or_create(
+                    pool=pool,
+                    name="patching rule for {}".format(pool.name),
+                    patching_enabled=bool(random.getrandbits(1)),
+                    min_percent_in_service=random.randint(0, 40),
+                    max_percent_out_of_service=random.randint(0, 40),
+                    max_percent_daily_patch=random.randint(0, 40),
+                )
+
+                # create patching schedule(s) for pool
+                schedule, is_new = PatchSchedule.objects.get_or_create(
+                    pool=pool,
+                    name="schedule for host patching in {}".format(pool.name),
+                    patching_enabled=bool(random.getrandbits(1)),
+                    start_day=random.choice(day_list),
+                    end_day=random.choice(day_list),
+                    start_hour=random.randint(0, 24),
+                    end_hour=random.randint(0, 24),
+                    start_minute=random.randint(0, 60),
+                    end_minute=random.randint(0, 60),
+                )
+
+                # add some package whitelist entries
+                for i in range(random.randint(1, 6)):
+                    package = random.choice(package_name_list)
+                    wl, is_new = PackageWhitelist.objects.get_or_create(
+                        service=service,
+                        name=package,
+                        package_regex="{}*".format(package),
+                    )
 
 
 def create_core(clean=False):

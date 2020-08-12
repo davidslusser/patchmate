@@ -38,6 +38,7 @@ urlpatterns = [
 
     # app urls
     path('userextensions/', include('userextensions.urls'), ),
+    path('servicemgr/', include('servicemgr.urls'), ),
 
     # userextension views
     path('list_recents/', views.ListRecents.as_view(), name='list_recents'),

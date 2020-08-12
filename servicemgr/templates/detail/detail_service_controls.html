@@ -1,0 +1,225 @@
+{% extends base_template|default:"base.htm" %}
+{% load staticfiles %}
+
+{% block local_head %}
+{% endblock local_head %}
+
+
+{% block content %}
+    <div class="container-fluid mb-4 animated fadeIn">
+        <h1><span class="text-primary mr-2"><b>Service: </b></span><span class="text-secondary"><small>{{ object.name }}</small></span></h1><br/>
+    </div>
+
+    <!-- summary of host state counts -->
+    <section class="animated fadeIn" style="animation-delay: .25s;">
+
+        <div class="container-fluid mb-3">
+            <div class="row">
+                <!-- show service controls -->
+                <div class="col-sm-12 col-md-6 col-lg-6">
+                    <div class="card mb-4 bg-light shadow1 pattern_list_card">
+                        <div class="card-header text-primary font-weight-bold text-lg-left">
+                            <div class="row">
+                                <div class="col-sm-6 text-left">Settings</div>
+                                <div class="col-sm-6 text-right" style="text-align: right">
+                                    <small>
+                                        <a class="hvr-grow" href="#" data-toggle="modal" data-target="">
+                                            <i class="fas fa-plus-circle mr-2"></i>
+                                            Edit
+                                        </a>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body" style="overflow-y: auto; overflow-x: hidden; height: 600px">
+                            <div class="row boarder border-bottom mb-2">
+                                <div class="col-sm-6 col-md-6 col-lg-5 font-weight-bold">Patching Enabled:</div>
+                                <div class="col-sm-6 col-md-6 col-lg-7">{{ object.servicecontrol.patching_enabled }}</div>
+                            </div>
+                            <div class="row boarder border-bottom mb-2">
+                                <div class="col-sm-6 col-md-6 col-lg-5 font-weight-bold">Patch Frequency:</div>
+                                <div class="col-sm-6 col-md-6 col-lg-7">{{ object.servicecontrol.patch_frequency }}</div>
+                            </div>
+                            <div class="row boarder border-bottom mb-2">
+                                <div class="col-sm-6 col-md-6 col-lg-5 font-weight-bold">Script Path:</div>
+                                <div class="col-sm-6 col-md-6 col-lg-7">{{ object.servicecontrol.script_path }}</div>
+                            </div>
+                            <div class="row boarder border-bottom mb-2">
+                                <div class="col-sm-6 col-md-6 col-lg-5 font-weight-bold">Minimum in service:</div>
+                                <div class="col-sm-6 col-md-6 col-lg-7">{{ object.servicecontrol.min_percent_in_service }}%</div>
+                            </div>
+                            <div class="row boarder border-bottom mb-2">
+                                <div class="col-sm-6 col-md-6 col-lg-5 font-weight-bold">Max out of service:</div>
+                                <div class="col-sm-6 col-md-6 col-lg-7">{{ object.servicecontrol.max_percent_out_of_service }}%</div>
+                            </div>
+                            <div class="row boarder border-bottom mb-2">
+                                <div class="col-sm-6 col-md-6 col-lg-5 font-weight-bold">Max daily patch:</div>
+                                <div class="col-sm-6 col-md-6 col-lg-7">{{ object.servicecontrol.max_percent_daily_patch }}%</div>
+                            </div>
+                            <div class="row boarder border-bottom mb-2">
+                                <div class="col-sm-6 col-md-6 col-lg-5 font-weight-bold">Email Alerts:</div>
+                                <div class="col-sm-6 col-md-6 col-lg-7">{{ object.servicecontrol.alerts_email }}</div>
+                            </div>
+                            <div class="row border-bottom mb-2">
+                                <div class="col-sm-6 col-md-6 col-lg-5 font-weight-bold">Slack Alerts:</div>
+                                <div class="col-sm-6 col-md-6 col-lg-7">{{ object.servicecontrol.alerts_slack }}</div>
+                            </div>
+                            <div class="row">&nbsp;</div>
+                            <div class="row">
+                                <div class="col-sm-6 col-md-6 col-lg-5 font-weight-bold">Hosts:</div>
+                                <div class="col-sm-6 col-md-6 col-lg-7">{{ object.host_set.count }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 col-md-6 col-lg-5 font-weight-bold">Pools:</div>
+                                <div class="col-sm-6 col-md-6 col-lg-7">{{ object.patchpool_set.count }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- list pools for this service -->
+                <div class="col-sm-12 col-md-6 col-lg-6">
+
+                    <div class="card mb-4 bg-light shadow1 pattern_list_card">
+                        <div class="card-header text-primary font-weight-bold text-lg-left">
+                            <div class="row">
+                                <div class="col-sm-6 text-left">Pools</div>
+                                <div class="col-sm-6 text-right" style="text-align: right">
+                                    <small>
+                                        <a class="hvr-grow" href="#" data-toggle="modal" data-target="">
+                                            <i class="fas fa-plus-circle mr-2"></i>
+                                            Add Pool
+                                        </a>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body" style="overflow-y: auto; overflow-x: hidden; height: 300px">
+                            <ul class="list-group mx-auto justify-content-center" style="max-width: 95%; margin-top: .5%; margin-bottom: .5%">
+                                {% for pool in object.patchpool_set.all|dictsort:"name" %}
+                                    <li class="list-group-item hvr-grow m-1" style="background-color: white;">
+                                        <div class="row flex-nowrap" style="height: 25px;">
+                                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-left">
+                                                <a href=""><b>{{ pool.name }}</b></a>
+                                            </div>
+                                            <div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 mr-sm-n2 text-left">
+                                                <p><small style="font-size: 10px">
+                                                    {% if pool.description %}
+                                                        {{ pool.description }}
+                                                    {% endif %}
+                                                </small></p>
+                                            </div>
+                                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 text-right">
+                                                <a href="#" title="view pattern details"
+                                                   onClick="showInfo('', '{{ pattern.id }}', 'Details: <small><i>{{ pattern.name }}</i></small>', true);"
+                                                   role="button" data-toggle="tooltip" data-placement="left">
+                                                    <i class="fa fa-info-circle fa-fw text-secondary"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- list hosts -->
+{#                <div class="col-sm-12 col-md-6 col-lg-6">#}
+{#                    <div class="card mb-4 bg-light shadow1 pattern_list_card">#}
+{#                        <div class="card-header text-primary font-weight-bold text-lg-left">#}
+{#                            Hosts#}
+{#                        </div>#}
+{#                        <div class="card-body" style="overflow-y: auto; overflow-x: hidden; height: 300px">#}
+{#                            <ul class="list-group mx-auto justify-content-center" style="max-width: 95%; margin-top: .5%; margin-bottom: .5%">#}
+{#                                {% for host in object.host_set.all|dictsort:"name" %}#}
+{#                                    <li class="list-group-item hvr-grow m-1" style="background-color: white;">#}
+{#                                        <div class="row flex-nowrap" style="height: 25px;">#}
+{#                                            <div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 text-left">#}
+{#                                                <a href=""><b>{{ host.name }}</b></a>#}
+{#                                            </div>#}
+{#                                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 mr-sm-n2 text-left">#}
+{#                                                <p><small style="font-size: 10px">#}
+{#                                                    {{ host.last_patched_at }}#}
+{#                                                </small></p>#}
+{#                                            </div>#}
+{#                                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 text-right">#}
+{#                                                <a href="#" title="view pattern details"#}
+{#                                                   onClick="showInfo('', '{{ pattern.id }}', 'Details: <small><i>{{ pattern.name }}</i></small>', true);"#}
+{#                                                   role="button" data-toggle="tooltip" data-placement="left">#}
+{#                                                    <i class="fa fa-info-circle fa-fw text-secondary"></i>#}
+{#                                                </a>#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                    </li>#}
+{#                                {% endfor %}#}
+{#                            </ul>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+
+                <!-- list whitelisted packages -->
+                <div class="col-sm-12 col-md-6 col-lg-6">
+                    <div class="card mb-4 bg-light shadow1 pattern_list_card">
+                        <div class="card-header text-primary font-weight-bold text-lg-left">
+                            <div class="row">
+                                <div class="col-sm-6 text-left">Whitelisted Packages</div>
+                                <div class="col-sm-6 text-right" style="text-align: right">
+                                    <small>
+                                        <a class="hvr-grow" href="#" data-toggle="modal" data-target="">
+                                            <i class="fas fa-plus-circle mr-2"></i>
+                                            Add Package
+                                        </a>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body" style="overflow-y: auto; overflow-x: hidden; height: 300px">
+                            <ul class="list-group mx-auto justify-content-center" style="max-width: 95%; margin-top: .5%; margin-bottom: .5%">
+                                {% for package in object.packagewhitelist_set.all|dictsort:"name" %}
+                                    <li class="list-group-item hvr-grow m-1" style="background-color: white;">
+                                        <div class="row flex-nowrap" style="height: 25px;">
+                                            <div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 text-left">
+                                                <a href=""><b>{{ package.name }}</b></a>
+                                            </div>
+                                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 mr-sm-n2 text-left">
+                                                <p><small style="font-size: 10px">
+{#                                                    {{ host.last_patched_at }}#}
+                                                </small></p>
+                                            </div>
+                                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 text-right">
+                                                <a href="#" title="view pattern details"
+                                                   onClick="showInfo('', '{{ pattern.id }}', 'Details: <small><i>{{ pattern.name }}</i></small>', true);"
+                                                   role="button" data-toggle="tooltip" data-placement="left">
+                                                    <i class="fa fa-info-circle fa-fw text-secondary"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+
+    <div class="m-4">&nbsp;</div>
+
+
+    {% include 'component/modals.htm' %}
+
+    {% with form_add_pattern as form_data %}
+        {% include 'generic/generic_modal_form.htm' %}
+    {% endwith %}
+
+    {% if modals %}
+        {% include modals %}
+    {% endif %}
+
+{% endblock %}

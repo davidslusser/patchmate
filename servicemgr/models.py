@@ -22,10 +22,6 @@ class Service(PatchMateBase):
     name = models.CharField(max_length=255, unique=True, help_text="name of this service")
     owner = models.ForeignKey('Owner', on_delete=models.CASCADE)
     description = models.CharField(max_length=255, blank=True, null=True, help_text="description of this service")
-    # patching_enabled = models.BooleanField(default=False, help_text="enable/disable patching on this service")
-    # script_path = models.CharField(max_length=64, default="/opt/patchmate/service_control_scripts", help_text="location on hosts where service control scripts live")
-    # patch_frequency = models.IntegerField(default=60, help_text="frequency, in days, of how often patch events should take place")
-
 
     class Meta:
         ordering = ('-created_at',)

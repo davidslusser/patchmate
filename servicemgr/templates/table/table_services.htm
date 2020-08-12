@@ -1,0 +1,31 @@
+<table class="table table-condensed table-bordered table-striped" data-toggle="table" data-search="true"
+       data-flat="true" data-pagination="true" data-show-pagination-switch="true" data-show-columns="true"
+       data-show-export="true" data-reorderable-columns="true" data-resizable="false" data-export-types="['excel','csv','txt','sql']">
+    <thead>
+    <tr>
+        <th data-field="owner" data-sortable="true">Owner</th>
+        <th data-field="name" data-sortable="true">Name</th>
+        <th data-field="description" data-sortable="true">Description</th>
+        <th data-field="host_count" data-sortable="true">Host Count</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in queryset|dictsort:"name" %}
+        <tr>
+            <td><a data-value={{ row.owner.name }}>{{ row.owner }}</a></td>
+            <td><a data-value={{ row.name }}><a href="{% url 'servicemgr:detail_service_controls' row.id %}">{{ row.name }}</a></td>
+            <td><a data-value={{ row.description }}>{{ row.description }}</a></td>
+            <td>
+                {% with row.host_set.count as count %}
+                    <a data-value={{ count }}>{{ count }}</a>
+                {% endwith %}
+            </td>
+            <!-- actions -->
+            <td>
+
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

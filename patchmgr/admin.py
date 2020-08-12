@@ -7,7 +7,8 @@ from patchmgr.models import (ServiceControl,
                              PatchSchedule,
                              PackageWhitelist,
                              PatchQueue,
-                             PatchEvent
+                             PatchEvent,
+                             PatchEvenStep
                              )
 
 
@@ -18,9 +19,9 @@ class ServiceControlAdmin(admin.ModelAdmin):
 
 
 class PatchPoolAdmin(admin.ModelAdmin):
-    list_display = ['id', 'created_at', 'updated_at', 'active', 'service', 'name', 'description', 'hostname_regex', 'enabled']
+    list_display = ['id', 'created_at', 'updated_at', 'active', 'service', 'name', 'description', 'hostname_regex', 'patching_enabled']
     search_fields = ['name', 'description', 'hostname_regex']
-    list_filter = ['active', 'service', 'enabled']
+    list_filter = ['active', 'service', 'patching_enabled']
 
 
 class PatchPoolRuleAdmin(admin.ModelAdmin):
@@ -30,15 +31,15 @@ class PatchPoolRuleAdmin(admin.ModelAdmin):
 
 
 class PatchScheduleAdmin(admin.ModelAdmin):
-    list_display = ['id', 'created_at', 'updated_at', 'active', 'pool', 'name', 'start_datetime', 'end_datetime', 'enabled']
-    search_fields = ['name']
-    list_filter = ['active', 'pool', 'enabled']
+    list_display = ['id', 'created_at', 'updated_at', 'active', 'pool', 'name', 'patching_enabled', 'start_day', 'start_hour', 'start_minute', 'end_day', 'end_hour', 'end_minute']
+    search_fields = ['name', 'start_day', 'start_hour', 'start_minute', 'end_day', 'end_hour', 'end_minute']
+    list_filter = ['active', 'pool', 'patching_enabled', 'start_day', 'end_day']
 
 
 class PackageWhitelistAdmin(admin.ModelAdmin):
-    list_display = ['id', 'created_at', 'updated_at', 'active', 'service', 'name', 'description', 'package_regex', 'enabled']
+    list_display = ['id', 'created_at', 'updated_at', 'active', 'service', 'name', 'description', 'package_regex']
     search_fields = ['name', 'description', 'package_regex']
-    list_filter = ['active', 'service', 'enabled']
+    list_filter = ['active', 'service']
 
 
 class PatchQueueAdmin(admin.ModelAdmin):
@@ -48,9 +49,15 @@ class PatchQueueAdmin(admin.ModelAdmin):
 
 
 class PatchEventAdmin(admin.ModelAdmin):
-    list_display = ['id', 'created_at', 'updated_at', 'active']
-    search_fields = []
-    list_filter = ['active']
+    list_display = ['id', 'active', 'host', 'status', 'completed', 'created_at', 'updated_at']
+    search_fields = ['status', 'completed']
+    list_filter = ['active', 'host', 'status']
+
+
+class PatchEvenStepAdmin(admin.ModelAdmin):
+    list_display = ['id', 'patch_event', 'status', 'result', 'completed', 'output', 'created_at', 'updated_at']
+    search_fields = ['status', 'result', 'completed', 'output']
+    list_filter = ['patch_event', 'status', 'result']
 
 
 # register models
@@ -61,3 +68,4 @@ admin.site.register(PatchSchedule, PatchScheduleAdmin)
 admin.site.register(PackageWhitelist, PackageWhitelistAdmin)
 admin.site.register(PatchQueue, PatchQueueAdmin)
 admin.site.register(PatchEvent, PatchEventAdmin)
+admin.site.register(PatchEvenStep, PatchEvenStepAdmin)
